@@ -31,6 +31,7 @@ with DAG(
         import os
         os.system('pip3 install torch torchvision torchaudio transformers boto3 --index-url https://download.pytorch.org/whl/cu114')      
         os.system('mkdir models')
+        print("pip3 freeze")
         os.system("""
         python run_clm.py 
         --model_name_or_path sberbank-ai/rugpt3small_based_on_gpt2 
