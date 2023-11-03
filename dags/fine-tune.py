@@ -46,6 +46,9 @@ with DAG(
     mkdir_script = BashOperator(
         task_id="mkdir",
         bash_command="mkdir models",
+        executor_config = {
+        "pod_override": k8s.V1Pod(spec=k8s.V1PodSpec(containers=[k8s.V1Container(name="base", image=IMAGE)]))
+    },
 )
     finetune_this = BashOperator(
         task_id="finetune",
@@ -59,6 +62,9 @@ with DAG(
         --num_train_epochs 20 
         --output_dir models/rugpt3small 
         --overwrite_output_dir""",
+        executor_config = {
+        "pod_override": k8s.V1Pod(spec=k8s.V1PodSpec(containers=[k8s.V1Container(name="base", image=IMAGE)]))
+    },
 )
     
     save_model = PythonOperator(
