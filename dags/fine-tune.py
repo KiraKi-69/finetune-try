@@ -44,6 +44,12 @@ with DAG(
         --overwrite_output_dir
         """)
 
+        from transformers import pipeline
+
+        generator = pipeline("text-generation", model="models/rugpt3small")
+
+        print(generator("Вопрос: Что такое учебный центр Neoflex? Ответ: ", do_sample=True, max_length=200))
+
         
 
     
