@@ -1,11 +1,9 @@
 import airflow
 from airflow import DAG
-from airflow.models import Variable
-from airflow.operators.dummy import DummyOperator
+from airflow.operators.bash import BashOperator
 from airflow.operators.python_operator import PythonOperator
 from datetime import timedelta
 from airflow.utils.dates import days_ago
-from airflow.models import Variable
 
 from kubernetes.client import models as k8s
 
