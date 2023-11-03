@@ -31,7 +31,7 @@ with DAG(
         import os
     
         os.system('mkdir models')
-        print("pip3 freeze")
+
         os.system("""
         python run_clm.py 
         --model_name_or_path sberbank-ai/rugpt3small_based_on_gpt2 
