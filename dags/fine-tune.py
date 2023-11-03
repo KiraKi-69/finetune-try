@@ -28,11 +28,8 @@ with DAG(
 ) as dag:
 
     def finetune_model():
-        import sys
-        import subprocess
-
-        subprocess.check_call([sys.executable, '-m', 'pip', 'install','pytorch'])         
-
+        import os
+        os.system('pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu114')      
 
 
     
