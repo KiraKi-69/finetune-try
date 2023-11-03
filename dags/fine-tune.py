@@ -39,6 +39,9 @@ with DAG(
     load_finetune_script = BashOperator(
         task_id="load_finetune_script",
         bash_command="wget https://raw.githubusercontent.com/huggingface/transformers/main/examples/pytorch/language-modeling/run_clm.py",
+        executor_config = {
+        "pod_override": k8s.V1Pod(spec=k8s.V1PodSpec(containers=[k8s.V1Container(name="base", image=IMAGE)]))
+    },
 )
     mkdir_script = BashOperator(
         task_id="mkdir",
