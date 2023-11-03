@@ -31,7 +31,7 @@ with DAG(
         import sys
         import subprocess
 
-        subprocess.check_call([sys.executable, '-m', 'pip', 'install','pytorch torchvision torchaudio cudatoolkit=11.4 -c pytorch -c nvidia'])         
+        subprocess.check_call([sys.executable, '-m', 'pip', 'install','pytorch'])         
 
 
 
