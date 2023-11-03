@@ -12,7 +12,7 @@ default_args = {
     'retry_delay': timedelta(minutes=5),
 }
 
-IMAGE='harbor.neoflex.ru/dognauts/dognauts-airflow:2.5.3-py3.8-v6TW'
+IMAGE='harbor.neoflex.ru/dognauts/dognauts-airflow:2.5.3-py3.8-v6TWC'
 
 
 with DAG(
@@ -28,7 +28,17 @@ with DAG(
     def finetune_model():
         import os
     
-        os.system('mkdir models')
+        os.system('mkdir /opt/airflow/models')
+        os.system("""python opt/airflow/run_clm.py 
+        --model_name_or_path sberbank-ai/rugpt3small_based_on_gpt2 
+        --train_file /opt/airflow/train.txt 
+        --per_device_train_batch_size 1 
+        --block_size 2048 
+        --dataset_config_name plain_text 
+        --do_train 
+        --num_train_epochs 20 
+        --output_dir /opt/airflow/models/rugpt3small 
+        --overwrite_output_dir""")
 
         from transformers import pipeline
 
@@ -36,20 +46,20 @@ with DAG(
 
         print(generator("Вопрос: Что такое учебный центр Neoflex? Ответ: ", do_sample=True, max_length=200))
 
-    load_finetune_script = BashOperator(
-        task_id="load_finetune_script",
-        bash_command="wget https://raw.githubusercontent.com/huggingface/transformers/main/examples/pytorch/language-modeling/run_clm.py",
-        executor_config = {
-        "pod_override": k8s.V1Pod(spec=k8s.V1PodSpec(containers=[k8s.V1Container(name="base", image=IMAGE)]))
-    },
-)
-    mkdir_script = BashOperator(
-        task_id="mkdir",
-        bash_command="mkdir models",
-        executor_config = {
-        "pod_override": k8s.V1Pod(spec=k8s.V1PodSpec(containers=[k8s.V1Container(name="base", image=IMAGE)]))
-    },
-)
+#     load_finetune_script = BashOperator(
+#         task_id="load_finetune_script",
+#         bash_command="wget https://raw.githubusercontent.com/huggingface/transformers/main/examples/pytorch/language-modeling/run_clm.py",
+#         executor_config = {
+#         "pod_override": k8s.V1Pod(spec=k8s.V1PodSpec(containers=[k8s.V1Container(name="base", image=IMAGE)]))
+#     },
+# )
+#     mkdir_script = BashOperator(
+#         task_id="mkdir",
+#         bash_command="mkdir models",
+#         executor_config = {
+#         "pod_override": k8s.V1Pod(spec=k8s.V1PodSpec(containers=[k8s.V1Container(name="base", image=IMAGE)]))
+#     },
+# )
     finetune_this = BashOperator(
         task_id="finetune",
         bash_command="""python run_clm.py 
@@ -77,4 +87,5 @@ with DAG(
     )
 
 
-load_finetune_script >> mkdir_script >> finetune_this >> save_model
+# load_finetune_script >> mkdir_script >> finetune_this >> save_model
+save_model
