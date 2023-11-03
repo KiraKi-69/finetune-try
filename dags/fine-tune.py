@@ -14,7 +14,7 @@ default_args = {
     'retry_delay': timedelta(minutes=5),
 }
 
-IMAGE='harbor.neoflex.ru/dognauts/dognauts-airflow:2.5.3-py3.8-v6'
+IMAGE='harbor.neoflex.ru/dognauts/dognauts-airflow:2.5.3-py3.8-v6T'
 
 
 with DAG(
@@ -29,7 +29,7 @@ with DAG(
 
     def finetune_model():
         import os
-        os.system('pip3 install torch torchvision torchaudio transformers boto3 --index-url https://download.pytorch.org/whl/cu114')      
+    
         os.system('mkdir models')
         print("pip3 freeze")
         os.system("""
