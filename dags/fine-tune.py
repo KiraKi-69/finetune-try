@@ -29,8 +29,22 @@ with DAG(
 
     def finetune_model():
         import os
-        os.system('pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu114')      
+        os.system('pip3 install torch torchvision torchaudio transformers boto3 --index-url https://download.pytorch.org/whl/cu114')      
+        os.system('mkdir models')
+        os.system("""
+        python run_clm.py 
+        --model_name_or_path sberbank-ai/rugpt3small_based_on_gpt2 
+        --train_file train.txt 
+        --per_device_train_batch_size 1 
+        --block_size 2048 
+        --dataset_config_name plain_text 
+        --do_train 
+        --num_train_epochs 20 
+        --output_dir models/rugpt3small 
+        --overwrite_output_dir
+        """)
 
+        
 
     
     finetune_model_task = PythonOperator(
