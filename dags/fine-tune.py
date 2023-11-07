@@ -54,7 +54,7 @@ with DAG(
 
     load_finetune_script = BashOperator(
         task_id="load_finetune_script",
-        bash_command="wget -P /data https://raw.githubusercontent.com/huggingface/transformers/main/examples/pytorch/language-modeling/run_clm.py https://raw.githubusercontent.com/KiraKi-69/finetune-try/main/dags/train.txt",
+        bash_command="wget -P /data https://raw.githubusercontent.com/KiraKi-69/finetune-try/main/dags/run_clm.py https://raw.githubusercontent.com/KiraKi-69/finetune-try/main/dags/train.txt",
         executor_config = {
         "pod_override": pod_override
     },
