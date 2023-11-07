@@ -15,7 +15,7 @@ default_args = {
 IMAGE='harbor.neoflex.ru/dognauts/dognauts-airflow:2.5.3-py3.8-v6TW'
 
 vol1 = k8s.V1VolumeMount(
-    name='my-volume', mount_path='/opt/airflow/volume')
+    name='my-volume', mount_path='/data')
 volume = k8s.V1Volume(
     name='test-volume',
     persistent_volume_claim=k8s.V1PersistentVolumeClaimVolumeSource(
@@ -54,29 +54,29 @@ with DAG(
 
     load_finetune_script = BashOperator(
         task_id="load_finetune_script",
-        bash_command="wget -P /opt/airflow/volume https://raw.githubusercontent.com/huggingface/transformers/main/examples/pytorch/language-modeling/run_clm.py https://raw.githubusercontent.com/KiraKi-69/finetune-try/main/dags/train.txt",
+        bash_command="wget -P /data https://raw.githubusercontent.com/huggingface/transformers/main/examples/pytorch/language-modeling/run_clm.py https://raw.githubusercontent.com/KiraKi-69/finetune-try/main/dags/train.txt",
         executor_config = {
         "pod_override": pod_override
     },
 )
     mkdir_script = BashOperator(
         task_id="mkdir",
-        bash_command="mkdir /opt/airflow/volume/models",
+        bash_command="mkdir /data/models",
         executor_config = {
         "pod_override": pod_override
     },
 )
     finetune_this = BashOperator(
         task_id="finetune",
-        bash_command="""python /opt/airflow/volume/run_clm.py 
+        bash_command="""python /data/run_clm.py 
         --model_name_or_path sberbank-ai/rugpt3small_based_on_gpt2 
-        --train_file /opt/airflow/volume/train.txt 
+        --train_file /data/train.txt 
         --per_device_train_batch_size 1 
         --block_size 2048 
         --dataset_config_name plain_text 
         --do_train 
         --num_train_epochs 20 
-        --output_dir /opt/airflow/volume/models/rugpt3small 
+        --output_dir /data/models/rugpt3small 
         --overwrite_output_dir""",
         executor_config = {
         "pod_override": pod_override
