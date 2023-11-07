@@ -68,15 +68,15 @@ with DAG(
 )
     finetune_this = BashOperator(
         task_id="finetune",
-        bash_command="""python /data/run_clm.py 
-        --model_name_or_path sberbank-ai/rugpt3small_based_on_gpt2 
-        --train_file /data/train.txt 
-        --per_device_train_batch_size 1 
-        --block_size 2048 
-        --dataset_config_name plain_text 
-        --do_train 
-        --num_train_epochs 20 
-        --output_dir /data/models/rugpt3small 
+        bash_command="""python /data/run_clm.py \'
+        --model_name_or_path sberbank-ai/rugpt3small_based_on_gpt2 \'
+        --train_file /data/train.txt \'
+        --per_device_train_batch_size 1 \'
+        --block_size 2048 \'
+        --dataset_config_name plain_text \'
+        --do_train \'
+        --num_train_epochs 20 \'
+        --output_dir /data/models/rugpt3small \'
         --overwrite_output_dir""",
         executor_config = {
         "pod_override": pod_override
@@ -93,6 +93,6 @@ with DAG(
     )
 
 
-load_finetune_script >> mkdir_script >> finetune_this >> save_model
-# load_finetune_script >> finetune_this >> save_model
+# load_finetune_script >> mkdir_script >> finetune_this >> save_model
+load_finetune_script >> finetune_this >> save_model
 # load_finetune_script
