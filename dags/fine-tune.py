@@ -93,6 +93,6 @@ with DAG(
     )
 
 
-load_finetune_script >> mkdir_script >> finetune_this >> save_model
-# load_finetune_script >> mkdir_script >> finetune_this
+# load_finetune_script >> mkdir_script >> finetune_this >> save_model
+load_finetune_script >> finetune_this >> save_model
 # load_finetune_script
