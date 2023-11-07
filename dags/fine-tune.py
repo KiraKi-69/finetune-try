@@ -42,23 +42,9 @@ with DAG(
 ) as dag:
 
     def finetune_model():
-        import os
-    
-        os.system('mkdir /opt/airflow/models')
-        os.system("""python opt/airflow/run_clm.py 
-        --model_name_or_path sberbank-ai/rugpt3small_based_on_gpt2 
-        --train_file /opt/airflow/train.txt 
-        --per_device_train_batch_size 1 
-        --block_size 2048 
-        --dataset_config_name plain_text 
-        --do_train 
-        --num_train_epochs 20 
-        --output_dir /opt/airflow/models/rugpt3small 
-        --overwrite_output_dir""")
-
         from transformers import pipeline
 
-        generator = pipeline("text-generation", model="models/rugpt3small")
+        generator = pipeline("text-generation", model="/opt/airflow/volume/models/rugpt3small")
 
         print(
             generator(
@@ -68,44 +54,45 @@ with DAG(
 
     load_finetune_script = BashOperator(
         task_id="load_finetune_script",
-        bash_command="wget -P /opt/airflow/volume https://raw.githubusercontent.com/huggingface/transformers/main/examples/pytorch/language-modeling/run_clm.py",
+        bash_command="wget -P /opt/airflow/volume https://raw.githubusercontent.com/huggingface/transformers/main/examples/pytorch/language-modeling/run_clm.py https://raw.githubusercontent.com/KiraKi-69/finetune-try/main/dags/train.txt",
         executor_config = {
         "pod_override": pod_override
     },
 )
-#     mkdir_script = BashOperator(
-#         task_id="mkdir",
-#         bash_command="mkdir models",
-#         executor_config = {
-#         "pod_override": k8s.V1Pod(spec=k8s.V1PodSpec(containers=[k8s.V1Container(name="base", image=IMAGE)]))
-#     },
-# )
-#     finetune_this = BashOperator(
-#         task_id="finetune",
-#         bash_command="""python run_clm.py 
-#         --model_name_or_path sberbank-ai/rugpt3small_based_on_gpt2 
-#         --train_file train.txt 
-#         --per_device_train_batch_size 1 
-#         --block_size 2048 
-#         --dataset_config_name plain_text 
-#         --do_train 
-#         --num_train_epochs 20 
-#         --output_dir models/rugpt3small 
-#         --overwrite_output_dir""",
-#         executor_config = {
-#         "pod_override": k8s.V1Pod(spec=k8s.V1PodSpec(containers=[k8s.V1Container(name="base", image=IMAGE)]))
-#     },
-# )
+    mkdir_script = BashOperator(
+        task_id="mkdir",
+        bash_command="mkdir /opt/airflow/volume/models",
+        executor_config = {
+        "pod_override": pod_override
+    },
+)
+    finetune_this = BashOperator(
+        task_id="finetune",
+        bash_command="""python /opt/airflow/volume/run_clm.py 
+        --model_name_or_path sberbank-ai/rugpt3small_based_on_gpt2 
+        --train_file /opt/airflow/volume/train.txt 
+        --per_device_train_batch_size 1 
+        --block_size 2048 
+        --dataset_config_name plain_text 
+        --do_train 
+        --num_train_epochs 20 
+        --output_dir /opt/airflow/volume/models/rugpt3small 
+        --overwrite_output_dir""",
+        executor_config = {
+        "pod_override": pod_override
+    },
+)
     
-#     save_model = PythonOperator(
-#         task_id="finetune_model",
-#         python_callable=finetune_model,
-#         provide_context=True,
-#         executor_config = {
-#         "pod_override": k8s.V1Pod(spec=k8s.V1PodSpec(containers=[k8s.V1Container(name="base", image=IMAGE)]))
-#     },
-#     )
+    save_model = PythonOperator(
+        task_id="finetune_model",
+        python_callable=finetune_model,
+        provide_context=True,
+        executor_config = {
+        "pod_override": pod_override
+    },
+    )
 
 
-# load_finetune_script >> mkdir_script >> finetune_this >> save_model
-load_finetune_script
+load_finetune_script >> mkdir_script >> finetune_this >> save_model
+# load_finetune_script >> mkdir_script >> finetune_this
+# load_finetune_script
