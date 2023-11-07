@@ -26,7 +26,8 @@ volume = k8s.V1Volume(
 pod_override = k8s.V1Pod(
             spec=k8s.V1PodSpec(
                 containers=[k8s.V1Container(name="base", image=IMAGE)],
-                volumes=[volume]
+                volumes=[volume],
+                volumeMounts=[vol1]
                 )
             )
 
