@@ -15,7 +15,7 @@ default_args = {
 IMAGE='harbor.neoflex.ru/dognauts/dognauts-airflow:2.5.3-py3.8-v6TW'
 
 vol1 = k8s.V1VolumeMount(
-    name='my-volume', mount_path='/data')
+    name='test-volume', mount_path='/data')
 volume = k8s.V1Volume(
     name='test-volume',
     persistent_volume_claim=k8s.V1PersistentVolumeClaimVolumeSource(
