@@ -59,13 +59,13 @@ with DAG(
         "pod_override": pod_override
     },
 )
-    mkdir_script = BashOperator(
-        task_id="mkdir",
-        bash_command="mkdir /data/models",
-        executor_config = {
-        "pod_override": pod_override
-    },
-)
+#     mkdir_script = BashOperator(
+#         task_id="mkdir",
+#         bash_command="mkdir /data/models",
+#         executor_config = {
+#         "pod_override": pod_override
+#     },
+# )
     finetune_this = BashOperator(
         task_id="finetune",
         bash_command="""python /data/run_clm.py 
