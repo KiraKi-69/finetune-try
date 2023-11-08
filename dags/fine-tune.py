@@ -71,7 +71,7 @@ with DAG(
 
 
     cuda_version_script = BashOperator(
-        task_id="load_finetune_script",
+        task_id="cuda_version_script",
         bash_command="nvcc --version && nvidia-smi",
         executor_config = {
         "pod_override": pod_override
