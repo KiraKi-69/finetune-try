@@ -25,15 +25,21 @@ volume = k8s.V1Volume(
         claim_name='my-volume'
         ),
 )
-container_resources_cuda_gpu = {
-    "request_memory": "2G",
-    "request_cpu": "2",
-    "limit_gpu": "1",
-}
+
+container_resources = k8s.V1ResourceRequirements(
+        limits={
+            "memory": "2Gi",
+            "cpu": 2.0,
+        },
+        requests={
+            "memory": "2Gi",
+            "cpu": 2.0,
+        },
+    )
 
 pod_override = k8s.V1Pod(
             spec=k8s.V1PodSpec(
-                containers=[k8s.V1Container(name="base", image=IMAGE, resources=container_resources_cuda_gpu, volume_mounts=[vol1])],
+                containers=[k8s.V1Container(name="base", image=IMAGE, resources=container_resources, volume_mounts=[vol1])],
                 volumes=[volume],
             )
 )
