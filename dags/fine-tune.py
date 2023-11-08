@@ -60,7 +60,7 @@ with DAG(
     def finetune_model():
         from transformers import pipeline
 
-        generator = pipeline("text-generation", model="/opt/airflow/volume/models/rugpt3small")
+        generator = pipeline("text-generation", model="/data/models/rugpt3small")
 
         print(
             generator(
@@ -69,18 +69,9 @@ with DAG(
             )
 
 
-
-    cuda_version_script = BashOperator(
-        task_id="cuda_version_script",
-        bash_command="python /data/chek.py",
-        executor_config = {
-        "pod_override": pod_override
-    },
-    )
-
     load_finetune_script = BashOperator(
         task_id="load_finetune_script",
-        bash_command="wget -P /data https://raw.githubusercontent.com/KiraKi-69/finetune-try/main/dags/run_clm.py https://raw.githubusercontent.com/KiraKi-69/finetune-try/main/dags/train.txt https://raw.githubusercontent.com/KiraKi-69/finetune-try/main/dags/chek.py",
+        bash_command="wget -P /data https://raw.githubusercontent.com/KiraKi-69/finetune-try/main/dags/run_clm.py https://raw.githubusercontent.com/KiraKi-69/finetune-try/main/dags/train.txt",
         executor_config = {
         "pod_override": pod_override
     },
@@ -94,7 +85,7 @@ with DAG(
 # )
     finetune_this = BashOperator(
         task_id="finetune",
-        bash_command="""python /data/run_clm.py --model_name_or_path sberbank-ai/rugpt3small_based_on_gpt2 --train_file /data/train.txt --per_device_train_batch_size 1 --block_size 512 --dataset_config_name plain_text --do_train --num_train_epochs 20 --output_dir /data/models/rugpt3small --overwrite_output_dir""",
+        bash_command="""python /data/run_clm.py --model_name_or_path sberbank-ai/rugpt3small_based_on_gpt2 --train_file /data/train.txt --per_device_train_batch_size 1 --block_size 2048 --dataset_config_name plain_text --do_train --num_train_epochs 20 --output_dir /data/models/rugpt3small --overwrite_output_dir""",
         executor_config = {
         "pod_override": pod_override
     },
@@ -111,5 +102,5 @@ with DAG(
 
 
 # load_finetune_script >> mkdir_script >> finetune_this >> save_model
-load_finetune_script >> cuda_version_script >> finetune_this >> save_model
+load_finetune_script >> finetune_this >> save_model
 # load_finetune_script
