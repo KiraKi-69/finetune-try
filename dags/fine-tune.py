@@ -33,7 +33,7 @@ container_resources_cuda_gpu = {
 
 pod_override = k8s.V1Pod(
             spec=k8s.V1PodSpec(
-                containers=[k8s.V1Container(name="base", image=IMAGE, container_resources=container_resources_cuda_gpu, volume_mounts=[vol1])],
+                containers=[k8s.V1Container(name="base", image=IMAGE, resources=container_resources_cuda_gpu, volume_mounts=[vol1])],
                 volumes=[volume],
             )
 )
