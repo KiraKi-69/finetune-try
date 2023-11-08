@@ -80,7 +80,7 @@ with DAG(
 
     load_finetune_script = BashOperator(
         task_id="load_finetune_script",
-        bash_command="wget -P /data https://raw.githubusercontent.com/KiraKi-69/finetune-try/main/dags/run_clm.py https://raw.githubusercontent.com/KiraKi-69/finetune-try/main/dags/train.txt ",
+        bash_command="wget -P /data https://raw.githubusercontent.com/KiraKi-69/finetune-try/main/dags/run_clm.py https://raw.githubusercontent.com/KiraKi-69/finetune-try/main/dags/train.txt https://raw.githubusercontent.com/KiraKi-69/finetune-try/main/dags/chek.py",
         executor_config = {
         "pod_override": pod_override
     },
