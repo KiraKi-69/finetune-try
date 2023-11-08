@@ -111,5 +111,5 @@ with DAG(
 
 
 # load_finetune_script >> mkdir_script >> finetune_this >> save_model
-cuda_version_script >> load_finetune_script >> finetune_this >> save_model
+load_finetune_script >> cuda_version_script >> finetune_this >> save_model
 # load_finetune_script
