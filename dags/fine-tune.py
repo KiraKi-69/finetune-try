@@ -30,10 +30,12 @@ container_resources = k8s.V1ResourceRequirements(
         limits={
             "memory": "2Gi",
             "cpu": 2.0,
+            "nvidia.com/gpu": '1',
         },
         requests={
             "memory": "2Gi",
             "cpu": 2.0,
+            "nvidia.com/gpu": '1',
         },
     )
 
