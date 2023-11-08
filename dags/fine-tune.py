@@ -68,6 +68,16 @@ with DAG(
             do_sample=True, max_length=200)
             )
 
+
+
+    cuda_version_script = BashOperator(
+        task_id="load_finetune_script",
+        bash_command="nvcc --version && nvidia-smi",
+        executor_config = {
+        "pod_override": pod_override
+    },
+    )
+
     load_finetune_script = BashOperator(
         task_id="load_finetune_script",
         bash_command="wget -P /data https://raw.githubusercontent.com/KiraKi-69/finetune-try/main/dags/run_clm.py https://raw.githubusercontent.com/KiraKi-69/finetune-try/main/dags/train.txt",
@@ -101,5 +111,5 @@ with DAG(
 
 
 # load_finetune_script >> mkdir_script >> finetune_this >> save_model
-load_finetune_script >> finetune_this >> save_model
+cuda_version_script >> load_finetune_script >> finetune_this >> save_model
 # load_finetune_script
