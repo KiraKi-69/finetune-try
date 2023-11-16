@@ -29,12 +29,12 @@ volume = k8s.V1Volume(
 container_resources = k8s.V1ResourceRequirements(
         limits={
             "memory": "30Gi",
-            "cpu": 3.0,
+            "cpu": 2.0,
             "nvidia.com/gpu": '1',
         },
         requests={
             "memory": "30Gi",
-            "cpu": 3.0,
+            "cpu": 2.0,
             "nvidia.com/gpu": '1',
         },
     )
