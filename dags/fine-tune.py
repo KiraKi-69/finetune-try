@@ -57,26 +57,6 @@ with DAG(
     catchup=False
 ) as dag:
 
-    def finetune_model():
-        from transformers import pipeline
-        import mlflow
-
-        generator = pipeline("text-generation", model="/data/models/rugpt3small")
-
-        print(
-            generator(
-            "Вопрос: Что такое учебный центр Neoflex? Ответ: ", 
-            do_sample=True, max_length=200)
-            )
-
-        mlflow.set_experiment("Save_transformer")   
-        with mlflow.start_run():
-            mlflow.transformers.log_model(
-            transformers_model=generator,
-            artifact_path="model",
-        )
-
-
     load_finetune_script = BashOperator(
         task_id="load_finetune_script",
         bash_command="wget -P /data https://raw.githubusercontent.com/KiraKi-69/finetune-try/main/dags/run_clm.py https://raw.githubusercontent.com/KiraKi-69/finetune-try/main/dags/train.txt",
@@ -98,7 +78,17 @@ with DAG(
         "pod_override": pod_override
     },
 )
-    
+    def finetune_model():
+        from transformers import pipeline
+
+        generator = pipeline("text-generation", model="/data/models/rugpt3small")
+
+        print(
+            generator(
+            "Вопрос: Что такое учебный центр Neoflex? Ответ: ", 
+            do_sample=True, max_length=200)
+            )
+            
     save_model = PythonOperator(
         task_id="finetune_model",
         python_callable=finetune_model,
@@ -110,5 +100,3 @@ with DAG(
 
 
 load_finetune_script >> mkdir_script >> finetune_this >> save_model
-# load_finetune_script >> finetune_this >> save_model
-# save_model
